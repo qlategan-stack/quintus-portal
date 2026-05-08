@@ -11,6 +11,7 @@ type Tab = {
 
 const tabs: Tab[] = [
   { href: '/',              label: 'General',                match: (p) => p === '/' },
+  { href: '/tasks',         label: 'Tasks',                  match: (p) => p.startsWith('/tasks') },
   { href: '/webpages',      label: 'Webpages',               match: (p) => p.startsWith('/webpages') },
   { href: '/flowmatic',     label: 'Flowmatic',              match: (p) => p.startsWith('/flowmatic') },
   { href: '/international', label: 'International Projects', match: (p) => p.startsWith('/international') },

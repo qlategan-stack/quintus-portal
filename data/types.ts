@@ -56,17 +56,25 @@ export type GeneralEntryRow = {
   entry_actions: EntryActionRow[];
 };
 
-export type TaskRow = {
+export type TaskStatus = 'todo' | 'doing' | 'blocked' | 'done' | 'dropped';
+
+export const OPEN_STATUSES: TaskStatus[] = ['todo', 'doing', 'blocked'];
+
+/** Shape returned by the v_open_tasks view (joined with ventures, projects, people). */
+export type OpenTaskRow = {
   id: string;
   title: string;
   priority: Priority | null;
-  status: 'todo' | 'doing' | 'blocked';
+  status: TaskStatus;
   due_at: string | null;
   venture_slug: string | null;
   venture_name: string | null;
   project_title: string | null;
   assignee_name: string | null;
 };
+
+/** Legacy alias kept so existing imports don't break. */
+export type TaskRow = OpenTaskRow;
 
 export type MeetingRow = {
   id: string;
