@@ -1,11 +1,12 @@
-/**
- * Snapshot types — generated shapes from Supabase, consumed by the static portal.
- * Do NOT edit by hand; mirror schema changes here when you add columns.
- */
+// ─────────────────────────────────────────────────────────────────────────
+//  Shared DB-shaped types — mirror Supabase schema.
+//  Moved here from data/snapshot/types.ts when the snapshot pipeline was
+//  retired. Server Components consume these directly via the supabase-server
+//  client.
+// ─────────────────────────────────────────────────────────────────────────
 
 export type Priority = 'red' | 'yellow' | 'green' | 'blue';
 
-// Map back to existing emoji UI:
 export const PRIORITY_EMOJI: Record<Priority, '🔴' | '🟡' | '🟢' | '🔵'> = {
   red:    '🔴',
   yellow: '🟡',
@@ -13,9 +14,9 @@ export const PRIORITY_EMOJI: Record<Priority, '🔴' | '🟡' | '🟢' | '🔵'>
   blue:   '🔵',
 };
 
-export type VentureSnapshot = {
+export type VentureRow = {
   id: string;
-  slug: 'olympic' | 'flowmatic' | 'timion' | 'jbay' | 'tradecraft' | 'flowtrader' | 'mcaa' | string;
+  slug: string;
   name: string;
   entity_type: 'operating_company' | 'consultancy' | 'npo' | 'property' | 'product';
   parent_id: string | null;
@@ -26,7 +27,7 @@ export type VentureSnapshot = {
   metadata: Record<string, unknown>;
 };
 
-export type EntryConceptSnapshot = {
+export type EntryConceptRow = {
   id: string;
   slug: string;
   title: string;
@@ -34,7 +35,7 @@ export type EntryConceptSnapshot = {
   ord: number;
 };
 
-export type EntryActionSnapshot = {
+export type EntryActionRow = {
   id: string;
   priority: Priority;
   text: string;
@@ -42,20 +43,20 @@ export type EntryActionSnapshot = {
   task_id: string | null;
 };
 
-export type GeneralEntrySnapshot = {
+export type GeneralEntryRow = {
   id: string;
-  entry_date: string; // YYYY-MM-DD
+  entry_date: string;
   title: string;
   mood: string | null;
   big_idea_headline: string | null;
   big_idea_body: string | null;
   reflection: string | null;
   note: string | null;
-  entry_concepts: EntryConceptSnapshot[];
-  entry_actions: EntryActionSnapshot[];
+  entry_concepts: EntryConceptRow[];
+  entry_actions: EntryActionRow[];
 };
 
-export type TaskSnapshot = {
+export type TaskRow = {
   id: string;
   title: string;
   priority: Priority | null;
@@ -67,7 +68,7 @@ export type TaskSnapshot = {
   assignee_name: string | null;
 };
 
-export type MeetingSnapshot = {
+export type MeetingRow = {
   id: string;
   title: string;
   held_at: string;
@@ -76,7 +77,7 @@ export type MeetingSnapshot = {
   attendee_count: number;
 };
 
-export type AgentSnapshot = {
+export type AgentRow = {
   id: string;
   slug: string;
   name: string;
@@ -86,7 +87,7 @@ export type AgentSnapshot = {
   venture_slug: string | null;
 };
 
-export type WorkflowSnapshot = {
+export type WorkflowRow = {
   id: string;
   name: string;
   description: string | null;
@@ -96,17 +97,4 @@ export type WorkflowSnapshot = {
   trigger_type: 'manual' | 'schedule' | 'webhook' | 'file_watcher';
   status: 'active' | 'paused' | 'broken' | 'draft';
   last_run_at: string | null;
-};
-
-export type SnapshotMeta = {
-  builtAt: string;
-  source: 'supabase' | 'empty-fallback';
-  counts: {
-    ventures: number;
-    generalEntries: number;
-    openTasks: number;
-    recentMeetings: number;
-    agents: number;
-    workflows: number;
-  };
 };

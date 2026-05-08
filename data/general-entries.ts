@@ -1,19 +1,20 @@
 // ─────────────────────────────────────────────────────────────────────────
-//  General Entries — adapter
+//  General Entries — live Supabase query.
 //
-//  Source of truth: Supabase `general_entries` + `entry_concepts` +
-//  `entry_actions`, pulled at build time by `scripts/fetch-snapshot.ts`
-//  into `data/snapshot/general-entries.json`. This file shapes that
-//  snapshot back into the existing GeneralEntry type so app/page.tsx and
-//  app/components/GeneralEntryCard.tsx don't have to change.
+//  Phase 1 of the static-export → dynamic-Vercel migration: the build-time
+//  snapshot is gone. This module now exposes an async fetcher that runs in
+//  Server Components and queries Supabase at request time.
 //
-//  To add a new entry: edit it in Supabase Studio (Table editor →
-//  general_entries / entry_concepts / entry_actions). Next snapshot run
-//  picks it up; cron rebuilds Pages every 30 min.
+//  To add a new entry: edit it in Supabase Studio. The next page load picks
+//  it up — no rebuild required.
 // ─────────────────────────────────────────────────────────────────────────
 
-import snapshot from './snapshot/general-entries.json';
-import type { GeneralEntrySnapshot } from './snapshot/types';
+import 'server-only';
+import { getServerSupabase } from '@/app/lib/supabase-server';
+import {
+  PRIORITY_EMOJI,
+  type GeneralEntryRow,
+} from './types';
 
 export type Concept = { id: string; title: string; body: string };
 
@@ -33,42 +34,49 @@ export type GeneralEntry = {
   note?: string;
 };
 
-const PRIORITY_EMOJI: Record<'red' | 'yellow' | 'green' | 'blue', ActionPriority> = {
-  red:    '🔴',
-  yellow: '🟡',
-  green:  '🟢',
-  blue:   '🔵',
-};
-
-function adapt(s: GeneralEntrySnapshot): GeneralEntry {
+function adapt(row: GeneralEntryRow): GeneralEntry {
   const entry: GeneralEntry = {
-    date: s.entry_date,
-    title: s.title,
+    date: row.entry_date,
+    title: row.title,
   };
-  if (s.mood) entry.mood = s.mood;
-  if (s.big_idea_headline) {
+  if (row.mood) entry.mood = row.mood;
+  if (row.big_idea_headline) {
     entry.bigIdea = {
-      headline: s.big_idea_headline,
-      body: s.big_idea_body ?? '',
+      headline: row.big_idea_headline,
+      body: row.big_idea_body ?? '',
     };
   }
-  const concepts = (s.entry_concepts ?? []).map((c) => ({
-    id: c.slug,
-    title: c.title,
-    body: c.body,
-  }));
+  const concepts = (row.entry_concepts ?? [])
+    .slice()
+    .sort((a, b) => (a.ord ?? 0) - (b.ord ?? 0))
+    .map((c) => ({ id: c.slug, title: c.title, body: c.body }));
   if (concepts.length > 0) entry.concepts = concepts;
 
-  const actions = (s.entry_actions ?? []).map((a) => ({
-    priority: PRIORITY_EMOJI[a.priority],
-    text: a.text,
-  }));
+  const actions = (row.entry_actions ?? [])
+    .slice()
+    .sort((a, b) => (a.ord ?? 0) - (b.ord ?? 0))
+    .map((a) => ({ priority: PRIORITY_EMOJI[a.priority], text: a.text }));
   if (actions.length > 0) entry.actions = actions;
 
-  if (s.reflection) entry.reflection = s.reflection;
-  if (s.note) entry.note = s.note;
+  if (row.reflection) entry.reflection = row.reflection;
+  if (row.note) entry.note = row.note;
   return entry;
 }
 
-export const generalEntries: GeneralEntry[] =
-  (snapshot as unknown as GeneralEntrySnapshot[]).map(adapt);
+export async function getGeneralEntries(): Promise<GeneralEntry[]> {
+  const sb = getServerSupabase();
+  const { data, error } = await sb
+    .from('general_entries')
+    .select(
+      'id, entry_date, title, mood, big_idea_headline, big_idea_body, reflection, note, ' +
+        'entry_concepts ( id, slug, title, body, ord ), ' +
+        'entry_actions  ( id, priority, text, ord, task_id )',
+    )
+    .order('entry_date', { ascending: false });
+
+  if (error) {
+    console.error('general_entries query failed:', error.message);
+    return [];
+  }
+  return ((data ?? []) as unknown as GeneralEntryRow[]).map(adapt);
+}

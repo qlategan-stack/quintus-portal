@@ -1,13 +1,18 @@
-import { generalEntries } from '@/data/general-entries';
+import { getGeneralEntries } from '@/data/general-entries';
 import GeneralEntryCard from './components/GeneralEntryCard';
+
+// Always render fresh from Supabase. Will switch to tag-based revalidation
+// once Server Actions land in Phase 4 — for now, simple is correct.
+export const dynamic = 'force-dynamic';
 
 function dayOfYear(d: Date): number {
   const start = new Date(d.getFullYear(), 0, 0);
   return Math.floor((d.getTime() - start.getTime()) / 86_400_000);
 }
 
-export default function GeneralPage() {
-  const sorted = [...generalEntries].sort((a, b) => b.date.localeCompare(a.date));
+export default async function GeneralPage() {
+  const entries = await getGeneralEntries();
+  const sorted = [...entries].sort((a, b) => b.date.localeCompare(a.date));
   const now = new Date();
   const iso = now.toISOString().slice(0, 10);
   const day = dayOfYear(now);

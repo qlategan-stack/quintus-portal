@@ -3,12 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "predev": "npm run snapshot",
     "dev": "next dev",
-    "build": "npm run snapshot && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "snapshot": "tsx scripts/fetch-snapshot.ts",
     "import-notion": "tsx scripts/import-from-notion.ts"
   },
   "dependencies": {
