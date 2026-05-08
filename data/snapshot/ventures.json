@@ -1,0 +1,86 @@
+[
+  {
+    "id": "144fc9cd-976c-4755-90d3-78bf6d542f7b",
+    "slug": "olympic",
+    "name": "Olympic Paints",
+    "entity_type": "operating_company",
+    "parent_id": null,
+    "legal_entity": "K & K Paint Manufacturers CC",
+    "quintus_role": "Sales Manager",
+    "status": "active",
+    "brief_md": null,
+    "metadata": {}
+  },
+  {
+    "id": "3efe7e5d-5415-4a36-9f30-4bf3967b2221",
+    "slug": "flowmatic",
+    "name": "Flowmatic Automation",
+    "entity_type": "consultancy",
+    "parent_id": null,
+    "legal_entity": "Flowmatic Automation (Pty) Ltd",
+    "quintus_role": "Founder / Director",
+    "status": "active",
+    "brief_md": null,
+    "metadata": {}
+  },
+  {
+    "id": "283df106-a9ce-409e-8ba7-414e9ff6d1ea",
+    "slug": "timion",
+    "name": "Timion NPC",
+    "entity_type": "npo",
+    "parent_id": null,
+    "legal_entity": "Timion NPC",
+    "quintus_role": "Business Manager",
+    "status": "active",
+    "brief_md": null,
+    "metadata": {}
+  },
+  {
+    "id": "8ad08965-1e27-49a0-9804-53635feaa1b3",
+    "slug": "jbay",
+    "name": "Jeffreys Bay Airbnb",
+    "entity_type": "property",
+    "parent_id": null,
+    "legal_entity": "Personal (Quintus)",
+    "quintus_role": "Owner",
+    "status": "active",
+    "brief_md": null,
+    "metadata": {}
+  },
+  {
+    "id": "ceccc1e8-b4ec-45e7-b90b-2e87e9d1e37b",
+    "slug": "mcaa",
+    "name": "MCAA",
+    "entity_type": "product",
+    "parent_id": null,
+    "legal_entity": null,
+    "quintus_role": "Owner",
+    "status": "active",
+    "brief_md": null,
+    "metadata": {}
+  },
+  {
+    "id": "cb781ed3-40c6-4cf3-8604-240580d6fd8c",
+    "slug": "tradecraft",
+    "name": "TradeCraft",
+    "entity_type": "product",
+    "parent_id": "3efe7e5d-5415-4a36-9f30-4bf3967b2221",
+    "legal_entity": "Flowmatic Automation (Pty) Ltd",
+    "quintus_role": "Founder",
+    "status": "active",
+    "brief_md": null,
+    "metadata": {}
+  },
+  {
+    "id": "ec0a9845-6ca2-47d6-96bb-7b72c2e332a3",
+    "slug": "flowtrader",
+    "name": "Flowtrader",
+    "entity_type": "product",
+    "parent_id": "3efe7e5d-5415-4a36-9f30-4bf3967b2221",
+    "legal_entity": "Flowmatic Automation (Pty) Ltd",
+    "quintus_role": "Founder",
+    "status": "active",
+    "brief_md": null,
+    "metadata": {}
+  }
+]
