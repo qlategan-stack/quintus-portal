@@ -21,6 +21,14 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { writeFile, mkdir, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
+// @supabase/realtime-js checks globalThis.WebSocket in its constructor even
+// when Realtime is never used. Node 22+ has native WebSocket; on older Node
+// (and on CI runners that occasionally pin lower) we stub it. We never
+// actually open a socket — this is only to satisfy the constructor check.
+if (typeof (globalThis as { WebSocket?: unknown }).WebSocket === 'undefined') {
+  (globalThis as { WebSocket?: unknown }).WebSocket = class {};
+}
+
 const ROOT = process.cwd();
 const SNAPSHOT_DIR = resolve(ROOT, 'data', 'snapshot');
 
