@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { createSupabaseBrowserClient } from '@/app/lib/supabase-auth-browser';
 
 type Tab = {
   href: string;
@@ -19,9 +20,20 @@ const tabs: Tab[] = [
 ];
 
 export default function TabNav() {
-  // usePathname strips the configured basePath, so /webpages compares cleanly
-  // even when deployed under /quintus-portal.
   const pathname = usePathname() || '/';
+  const router = useRouter();
+
+  // Hide the nav on the auth routes — the user isn't signed in there.
+  if (pathname === '/login' || pathname.startsWith('/auth/')) {
+    return null;
+  }
+
+  async function signOut() {
+    const supabase = createSupabaseBrowserClient();
+    await supabase.auth.signOut();
+    router.replace('/login');
+    router.refresh();
+  }
 
   return (
     <nav className="tabs" aria-label="Primary">
@@ -45,6 +57,17 @@ export default function TabNav() {
               </li>
             );
           })}
+          <li style={{ marginLeft: 'auto' }}>
+            <button
+              type="button"
+              onClick={signOut}
+              className="tab"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', font: 'inherit' }}
+              aria-label="Sign out"
+            >
+              Sign out
+            </button>
+          </li>
         </ul>
       </div>
     </nav>
