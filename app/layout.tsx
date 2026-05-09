@@ -70,8 +70,8 @@ const BOOTSTRAP = `
   (function () {
     try {
       var root = document.documentElement;
-      var p = localStorage.getItem('qp-palette') || 'meridian';
-      var f = localStorage.getItem('qp-font')    || 'editorial';
+      var p = localStorage.getItem('qp-palette') || 'linen';
+      var f = localStorage.getItem('qp-font')    || 'slab';
       ['meridian','linen','cobalt','burnish'].forEach(function (n) {
         root.classList.remove('palette-' + n);
       });
@@ -98,7 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${fontVars} palette-meridian font-editorial`}
+      className={`${fontVars} palette-linen font-slab`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: BOOTSTRAP }} />
