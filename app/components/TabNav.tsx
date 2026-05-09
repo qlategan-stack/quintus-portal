@@ -15,9 +15,14 @@ const tabs: Tab[] = [
   { href: '/',              label: 'General',                match: (p) => p === '/' },
   { href: '/tasks',         label: 'Tasks',                  match: (p) => p.startsWith('/tasks') },
   { href: '/webpages',      label: 'Quintus Organisations',  match: (p) => p.startsWith('/webpages') },
+  { href: '/olympic',       label: 'Olympic Paints',         match: (p) => p.startsWith('/olympic') },
   { href: '/flowmatic',     label: 'Flowmatic',              match: (p) => p.startsWith('/flowmatic') },
-  { href: '/international', label: 'International Projects', match: (p) => p.startsWith('/international') },
   { href: '/flowtrader',    label: 'FlowTrader',             match: (p) => p.startsWith('/flowtrader') },
+  { href: '/tradecraft',    label: 'TradeCraft',             match: (p) => p.startsWith('/tradecraft') },
+  { href: '/jbay',          label: 'Jeffreys Bay',           match: (p) => p.startsWith('/jbay') },
+  { href: '/timion',        label: 'Timion NPC',             match: (p) => p.startsWith('/timion') },
+  { href: '/mcaa',          label: 'MCAA',                   match: (p) => p.startsWith('/mcaa') },
+  { href: '/international', label: 'International Projects', match: (p) => p.startsWith('/international') },
   { href: '/notion',        label: 'Notion Sync',            match: (p) => p.startsWith('/notion') },
 ];
 
