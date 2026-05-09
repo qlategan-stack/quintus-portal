@@ -50,6 +50,7 @@ export default async function TasksPage() {
               key={v.slug}
               venture={v}
               tasks={grouped.get(v.slug) ?? []}
+              allVentures={ventures}
             />
           ))}
 
@@ -57,6 +58,7 @@ export default async function TasksPage() {
           <VentureGroup
             venture={{ slug: UNASSIGNED_KEY, name: 'Unassigned' }}
             tasks={unassigned}
+            allVentures={ventures}
           />
         )}
 

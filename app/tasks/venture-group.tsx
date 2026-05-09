@@ -9,10 +9,12 @@ const STORAGE_PREFIX = 'qp.tasks.expanded.';
 export default function VentureGroup({
   venture,
   tasks,
+  allVentures,
   defaultOpen = false,
 }: {
   venture: Pick<VentureRow, 'slug' | 'name'> | { slug: '__unassigned__'; name: string };
   tasks: OpenTaskRow[];
+  allVentures: VentureRow[];
   defaultOpen?: boolean;
 }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -59,7 +61,7 @@ export default function VentureGroup({
           {tasks.length === 0 ? (
             <li className="task-empty">No open tasks.</li>
           ) : (
-            tasks.map((t) => <TaskRow key={t.id} task={t} />)
+            tasks.map((t) => <TaskRow key={t.id} task={t} ventures={allVentures} />)
           )}
         </ul>
       )}

@@ -751,16 +751,19 @@ button {
   padding: 14px 4px;
 }
 
+.task-row-wrap {
+  border-bottom: 1px solid var(--border);
+  transition: opacity 0.15s ease;
+}
+.task-row-wrap:last-child { border-bottom: none; }
+.task-row-wrap.is-pending { opacity: 0.4; pointer-events: none; }
+
 .task-row {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 11px 4px;
-  border-bottom: 1px solid var(--border);
-  transition: opacity 0.15s ease;
 }
-.task-row:last-child { border-bottom: none; }
-.task-row.is-pending { opacity: 0.4; pointer-events: none; }
 
 .task-priority {
   width: 22px;
@@ -910,7 +913,67 @@ button {
   color: var(--red);
   border-color: var(--red);
 }
+.task-action-expand:hover:not(:disabled) {
+  color: var(--gold);
+  border-color: var(--gold);
+}
 .task-action:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Task expanded detail panel ────────────────────────────────────────── */
+
+.task-detail {
+  padding: 4px 4px 18px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border-top: 1px dashed var(--border);
+  margin-top: 4px;
+}
+.task-detail-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.task-detail-field .kicker { color: var(--text-faint); }
+
+.task-detail-status {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin: 4px 0;
+  font-style: italic;
+}
+
+.task-detail-textarea {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  resize: vertical;
+  min-height: 64px;
+  outline: none;
+  transition: border-color 0.12s ease;
+}
+.task-detail-textarea:focus { border-color: var(--gold); }
+
+.task-detail-select {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  outline: none;
+  width: max-content;
+  min-width: 220px;
+  cursor: pointer;
+}
+.task-detail-select:focus { border-color: var(--gold); }
 
 /* ══════════════════════════════════════════════════════════════════════════
    NOTION SYNC

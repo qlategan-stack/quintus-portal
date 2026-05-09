@@ -131,3 +131,44 @@ export async function setTaskDueAt(id: string, dueAt: string | null): Promise<vo
   if (error) throw new Error(error.message);
   revalidatePath('/tasks');
 }
+
+export async function setTaskVenture(id: string, ventureId: string | null): Promise<void> {
+  const sb = getServerSupabase();
+  if (ventureId !== null) {
+    const { data, error } = await sb
+      .from('ventures')
+      .select('id')
+      .eq('id', ventureId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!data) throw new Error('Unknown venture.');
+  }
+  const { error } = await sb
+    .from('tasks')
+    .update({ venture_id: ventureId, project_id: null })
+    .eq('id', id);
+  if (error) throw new Error(error.message);
+  revalidatePath('/tasks');
+}
+
+export async function updateTaskDescription(id: string, description: string): Promise<void> {
+  const trimmed = description.trim();
+  const value = trimmed === '' ? null : trimmed;
+  const sb = getServerSupabase();
+  const { error } = await sb.from('tasks').update({ description: value }).eq('id', id);
+  if (error) throw new Error(error.message);
+  revalidatePath('/tasks');
+}
+
+/** Fetch a single task's description on demand — used to lazy-load when the
+ *  row is expanded so the /tasks page payload doesn't carry 508 long strings. */
+export async function getTaskDescription(id: string): Promise<string | null> {
+  const sb = getServerSupabase();
+  const { data, error } = await sb
+    .from('tasks')
+    .select('description')
+    .eq('id', id)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return (data?.description as string | null) ?? null;
+}
