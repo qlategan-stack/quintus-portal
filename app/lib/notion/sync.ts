@@ -107,6 +107,13 @@ function hash(c: Canonical): string {
   return createHash('sha256').update(JSON.stringify(stable)).digest('hex');
 }
 
+// sync_state.entity_id is NOT NULL in the schema, but we want a single
+// kind-level row per entity_kind to track "last sync of the whole kind."
+// We use the all-zeros UUID as a sentinel — stable, valid uuid format,
+// never collides with a real row (real rows always reference an existing
+// task/meeting/document UUID).
+const KIND_LEVEL_ID = '00000000-0000-0000-0000-000000000000';
+
 async function getLastSync(kind: EntityKind): Promise<string | null> {
   const sb = getServerSupabase();
   const { data, error } = await sb
@@ -114,28 +121,30 @@ async function getLastSync(kind: EntityKind): Promise<string | null> {
     .select('last_synced_at')
     .eq('entity_kind', kind)
     .eq('source', 'notion')
-    .is('entity_id', null)
+    .eq('entity_id', KIND_LEVEL_ID)
     .maybeSingle();
   if (error) return null;
   return (data?.last_synced_at as string | undefined) ?? null;
 }
 
-async function setLastSync(kind: EntityKind): Promise<void> {
+async function setLastSync(kind: EntityKind): Promise<{ ok: boolean; error?: string }> {
   const sb = getServerSupabase();
   const now = new Date().toISOString();
-  // We store one "kind-level" row per entity kind with entity_id = null
-  // to mark "the last time we synced this whole kind." Per-row sync_state
-  // entries are reserved for future deeper tracking.
-  await sb.from('sync_state').upsert(
+  const { error } = await sb.from('sync_state').upsert(
     {
       entity_kind: kind,
       source: 'notion',
-      entity_id: null,
+      entity_id: KIND_LEVEL_ID,
       last_synced_at: now,
       sync_direction: 'bidi',
     },
-    { onConflict: 'entity_kind,source,entity_id' },
+    { onConflict: 'entity_kind,entity_id,source' },
   );
+  if (error) {
+    console.error(`[sync] setLastSync(${kind}) failed:`, error.message);
+    return { ok: false, error: error.message };
+  }
+  return { ok: true };
 }
 
 async function logConflict(
@@ -246,7 +255,7 @@ export async function syncEntity(mapper: SyncMapper): Promise<SyncCounts> {
             .update(patch)
             .eq('id', s.id);
           if (error) throw new Error(error.message);
-          if (sTime >= new Date(lastSync ?? 0).getTime()) {
+          if (lastSync && sTime >= new Date(lastSync).getTime()) {
             // Both edited since last sync → conflict
             result.conflicts += 1;
             await logConflict(mapper.kind, s.id, {
@@ -259,14 +268,24 @@ export async function syncEntity(mapper: SyncMapper): Promise<SyncCounts> {
         } else {
           // Supabase newer (or tie) — push
           const props = await mapper.toNotionProperties(row);
-          await np(() =>
+          console.log(
+            `[sync] push ${mapper.kind} ${s.id} → notion ${page.id}`,
+            JSON.stringify(props),
+          );
+          const updated = await np(() =>
             notion.pages.update({
               page_id: page.id,
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               properties: props as any,
             }),
           );
-          if (nTime >= new Date(lastSync ?? 0).getTime()) {
+          console.log(
+            `[sync] push ${mapper.kind} ${s.id} ← notion responded; last_edited_time=${(updated as { last_edited_time?: string }).last_edited_time}`,
+          );
+          // Conflict only when BOTH sides changed since the last sync we recorded.
+          // First sync (lastSync == null) has no baseline; treat as initial
+          // reconciliation rather than logging every diff as a conflict.
+          if (lastSync && nTime >= new Date(lastSync).getTime()) {
             result.conflicts += 1;
             await logConflict(mapper.kind, s.id, {
               winner: 'supabase',
@@ -320,7 +339,15 @@ export async function syncEntity(mapper: SyncMapper): Promise<SyncCounts> {
   }
 
   // ── 6. Mark this kind as synced ──
-  if (result.errors.length === 0) await setLastSync(mapper.kind);
+  // Always attempt — even with row-level errors, recording a partial sync
+  // means the next click only re-checks deltas instead of starting cold.
+  const stamp = await setLastSync(mapper.kind);
+  if (!stamp.ok) {
+    result.errors.push({
+      id: 'sync_state',
+      message: `setLastSync failed: ${stamp.error}`,
+    });
+  }
 
   return result;
 }
