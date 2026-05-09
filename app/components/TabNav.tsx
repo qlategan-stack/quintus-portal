@@ -16,7 +16,7 @@ const tabs: Tab[] = [
   { href: '/flowmatic',     label: 'Flowmatic',              match: (p) => p.startsWith('/flowmatic') },
   { href: '/international', label: 'International Projects', match: (p) => p.startsWith('/international') },
   { href: '/flowtrader',    label: 'FlowTrader',             match: (p) => p.startsWith('/flowtrader') },
-  { href: '/notion',        label: 'Notion',                 match: (p) => p.startsWith('/notion') },
+  { href: '/notion',        label: 'Notion Sync',            match: (p) => p.startsWith('/notion') },
 ];
 
 export default function TabNav() {
