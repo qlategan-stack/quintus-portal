@@ -97,3 +97,37 @@ export async function setTaskStatus(id: string, status: TaskStatus): Promise<voi
   if (error) throw new Error(error.message);
   revalidatePath('/tasks');
 }
+
+// ── Inline edit actions ──────────────────────────────────────────────────
+
+export async function updateTaskTitle(id: string, title: string): Promise<void> {
+  const trimmed = title.trim();
+  if (!trimmed) throw new Error('Title cannot be empty.');
+  const sb = getServerSupabase();
+  const { error } = await sb.from('tasks').update({ title: trimmed }).eq('id', id);
+  if (error) throw new Error(error.message);
+  revalidatePath('/tasks');
+}
+
+export async function setTaskPriority(id: string, priority: Priority | null): Promise<void> {
+  if (priority !== null && !VALID_PRIORITIES.includes(priority)) {
+    throw new Error(`invalid priority: ${priority}`);
+  }
+  const sb = getServerSupabase();
+  const { error } = await sb.from('tasks').update({ priority }).eq('id', id);
+  if (error) throw new Error(error.message);
+  revalidatePath('/tasks');
+}
+
+export async function setTaskDueAt(id: string, dueAt: string | null): Promise<void> {
+  // dueAt is 'YYYY-MM-DD' from a native date input, or null to clear.
+  let value: string | null = null;
+  if (dueAt) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dueAt)) throw new Error('Invalid date format.');
+    value = `${dueAt}T12:00:00Z`;
+  }
+  const sb = getServerSupabase();
+  const { error } = await sb.from('tasks').update({ due_at: value }).eq('id', id);
+  if (error) throw new Error(error.message);
+  revalidatePath('/tasks');
+}

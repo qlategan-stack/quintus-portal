@@ -769,11 +769,97 @@ button {
   flex-shrink: 0;
   color: var(--text-faint);
 }
+.task-priority-clickable {
+  cursor: pointer;
+  border-radius: 50%;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s ease;
+}
+.task-priority-clickable:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+
 .task-title {
   flex: 1;
   font-size: 14px;
   line-height: 1.4;
   color: var(--text);
+}
+.task-title-clickable {
+  cursor: text;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 4px 6px;
+  margin: -4px -6px;
+  border-radius: var(--radius-sm);
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.task-title-clickable:hover:not(:disabled) {
+  background: var(--surface-2);
+  color: var(--gold);
+}
+
+.task-title-input {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--radius-sm);
+  padding: 3px 6px;
+  margin: -4px -6px;
+  outline: none;
+}
+.task-title-input:focus {
+  border-color: var(--gold);
+}
+
+.task-due-clickable {
+  cursor: pointer;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  padding: 2px 8px;
+  transition: border-color 0.12s ease;
+}
+.task-due-clickable:hover:not(:disabled) {
+  border-color: var(--border-strong);
+}
+
+.task-due-add {
+  cursor: pointer;
+  background: none;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-pill);
+  padding: 2px 10px;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  transition: color 0.12s, border-color 0.12s;
+}
+.task-due-add:hover:not(:disabled) {
+  color: var(--gold);
+  border-color: var(--gold-dim);
+}
+
+.task-due-input {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+  outline: none;
+}
+.task-due-input:focus {
+  border-color: var(--gold);
 }
 .task-project {
   font-family: var(--font-body);
