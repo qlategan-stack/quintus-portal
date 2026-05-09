@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import PaletteSwitcher from './PaletteSwitcher';
 
 type Tab = {
   href: string;
@@ -45,6 +46,7 @@ export default function TabNav() {
             );
           })}
         </ul>
+        <PaletteSwitcher />
       </div>
     </nav>
   );
