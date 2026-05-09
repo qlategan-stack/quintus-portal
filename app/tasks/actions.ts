@@ -172,3 +172,55 @@ export async function getTaskDescription(id: string): Promise<string | null> {
   if (error) throw new Error(error.message);
   return (data?.description as string | null) ?? null;
 }
+
+// ── Project actions ─────────────────────────────────────────────────────
+
+export async function setTaskProject(
+  taskId: string,
+  projectId: string | null,
+): Promise<void> {
+  const sb = getServerSupabase();
+  if (projectId !== null) {
+    const { data, error } = await sb
+      .from('projects')
+      .select('id')
+      .eq('id', projectId)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!data) throw new Error('Unknown project.');
+  }
+  const { error } = await sb
+    .from('tasks')
+    .update({ project_id: projectId })
+    .eq('id', taskId);
+  if (error) throw new Error(error.message);
+  revalidatePath('/tasks');
+}
+
+/** Atomic: create a new project under the given venture, assign it to the
+ *  task, and return the new project id so the UI can update without a refetch. */
+export async function createProjectAndAssign(
+  taskId: string,
+  ventureId: string,
+  title: string,
+): Promise<{ id: string; title: string }> {
+  const trimmed = title.trim();
+  if (!trimmed) throw new Error('Project name cannot be empty.');
+
+  const sb = getServerSupabase();
+  const { data: project, error: createErr } = await sb
+    .from('projects')
+    .insert({ venture_id: ventureId, title: trimmed, para_category: 'project', status: 'active' })
+    .select('id, title')
+    .single();
+  if (createErr) throw new Error(createErr.message);
+
+  const { error: assignErr } = await sb
+    .from('tasks')
+    .update({ project_id: project.id })
+    .eq('id', taskId);
+  if (assignErr) throw new Error(assignErr.message);
+
+  revalidatePath('/tasks');
+  return { id: project.id as string, title: project.title as string };
+}

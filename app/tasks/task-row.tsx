@@ -3,15 +3,17 @@
 import { useEffect, useRef, useState, useTransition } from 'react';
 import {
   completeTask,
+  createProjectAndAssign,
   dropTask,
   getTaskDescription,
   setTaskDueAt,
   setTaskPriority,
+  setTaskProject,
   setTaskVenture,
   updateTaskDescription,
   updateTaskTitle,
 } from './actions';
-import type { OpenTaskRow, Priority, VentureRow } from '@/data/types';
+import type { OpenTaskRow, Priority, ProjectRow, VentureRow } from '@/data/types';
 
 const PRIORITY_EMOJI: Record<Priority, string> = {
   red: '🔴',
@@ -58,9 +60,11 @@ type DescState =
 export default function TaskRow({
   task,
   ventures,
+  projects,
 }: {
   task: OpenTaskRow;
   ventures: VentureRow[];
+  projects: ProjectRow[];
 }) {
   const [pending, startTransition] = useTransition();
   const [editingTitle, setEditingTitle] = useState(false);
@@ -69,10 +73,16 @@ export default function TaskRow({
   const [expanded, setExpanded] = useState(false);
   const [desc, setDesc] = useState<DescState>({ kind: 'idle' });
   const [descDraft, setDescDraft] = useState('');
+  const [creatingProject, setCreatingProject] = useState(false);
+  const [newProjectName, setNewProjectName] = useState('');
   const cancelRef = useRef(false);
 
   const due = formatDue(task.due_at);
   const currentVenture = ventures.find((v) => v.slug === task.venture_slug);
+  const ventureProjects = currentVenture
+    ? projects.filter((p) => p.venture_id === currentVenture.id)
+    : [];
+  const currentProjectId = projects.find((p) => p.title === task.project_title && p.venture_id === currentVenture?.id)?.id ?? '';
 
   // Lazy-load description on first expand. Subsequent expands use the cache.
   useEffect(() => {
@@ -133,6 +143,44 @@ export default function TaskRow({
   function onVentureChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const v = e.target.value || null;
     startTransition(() => setTaskVenture(task.id, v));
+  }
+
+  function onProjectChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const v = e.target.value;
+    if (v === '__new__') {
+      setNewProjectName('');
+      setCreatingProject(true);
+      return;
+    }
+    const projectId = v || null;
+    startTransition(() => setTaskProject(task.id, projectId));
+  }
+
+  function commitNewProject() {
+    const name = newProjectName.trim();
+    if (!name || !currentVenture) {
+      setCreatingProject(false);
+      setNewProjectName('');
+      return;
+    }
+    startTransition(async () => {
+      try {
+        await createProjectAndAssign(task.id, currentVenture.id, name);
+      } finally {
+        setCreatingProject(false);
+        setNewProjectName('');
+      }
+    });
+  }
+
+  function onNewProjectKey(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      e.currentTarget.blur();
+    } else if (e.key === 'Escape') {
+      setCreatingProject(false);
+      setNewProjectName('');
+    }
   }
 
   function commitDescription() {
@@ -294,6 +342,47 @@ export default function TaskRow({
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className="task-detail-field">
+            <label className="kicker" htmlFor={`project-${task.id}`}>
+              Project
+            </label>
+            {creatingProject ? (
+              <input
+                type="text"
+                autoFocus
+                value={newProjectName}
+                onChange={(e) => setNewProjectName(e.target.value)}
+                onBlur={commitNewProject}
+                onKeyDown={onNewProjectKey}
+                placeholder={`New project under ${currentVenture?.name ?? 'venture'}…`}
+                className="task-detail-input"
+                disabled={pending}
+                aria-label="New project name"
+              />
+            ) : (
+              <select
+                id={`project-${task.id}`}
+                value={currentProjectId}
+                onChange={onProjectChange}
+                disabled={pending || !currentVenture}
+                className="task-detail-select"
+              >
+                <option value="">— None —</option>
+                {ventureProjects.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.title}
+                  </option>
+                ))}
+                {currentVenture && (
+                  <option value="__new__">+ New project…</option>
+                )}
+              </select>
+            )}
+            {!currentVenture && (
+              <p className="task-detail-status">Pick a venture to enable projects.</p>
+            )}
           </div>
         </div>
       )}

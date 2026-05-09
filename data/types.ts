@@ -27,6 +27,15 @@ export type VentureRow = {
   metadata: Record<string, unknown>;
 };
 
+export type ProjectRow = {
+  id: string;
+  venture_id: string | null;
+  title: string;
+  description: string | null;
+  para_category: 'project' | 'area' | 'resource' | 'archive';
+  status: 'active' | 'paused' | 'done' | 'archived';
+};
+
 export type EntryConceptRow = {
   id: string;
   slug: string;

@@ -1,4 +1,4 @@
-import { getOpenTasks, getActiveVentures } from '@/data/tasks';
+import { getOpenTasks, getActiveVentures, getActiveProjects } from '@/data/tasks';
 import AddTaskForm from './add-task-form';
 import VentureGroup from './venture-group';
 import type { OpenTaskRow } from '@/data/types';
@@ -10,9 +10,10 @@ export const dynamic = 'force-dynamic';
 const UNASSIGNED_KEY = '__unassigned__';
 
 export default async function TasksPage() {
-  const [tasks, ventures] = await Promise.all([
+  const [tasks, ventures, projects] = await Promise.all([
     getOpenTasks(),
     getActiveVentures(),
+    getActiveProjects(),
   ]);
 
   // Group by venture slug. Tasks with a venture not in the active list
@@ -51,6 +52,7 @@ export default async function TasksPage() {
               venture={v}
               tasks={grouped.get(v.slug) ?? []}
               allVentures={ventures}
+              allProjects={projects}
             />
           ))}
 
@@ -59,6 +61,7 @@ export default async function TasksPage() {
             venture={{ slug: UNASSIGNED_KEY, name: 'Unassigned' }}
             tasks={unassigned}
             allVentures={ventures}
+            allProjects={projects}
           />
         )}
 

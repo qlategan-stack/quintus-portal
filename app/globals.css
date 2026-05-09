@@ -960,7 +960,8 @@ button {
 }
 .task-detail-textarea:focus { border-color: var(--gold); }
 
-.task-detail-select {
+.task-detail-select,
+.task-detail-input {
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--text);
@@ -970,10 +971,12 @@ button {
   padding: 8px 12px;
   outline: none;
   width: max-content;
-  min-width: 220px;
-  cursor: pointer;
+  min-width: 240px;
 }
-.task-detail-select:focus { border-color: var(--gold); }
+.task-detail-select { cursor: pointer; }
+.task-detail-select:focus,
+.task-detail-input:focus { border-color: var(--gold); }
+.task-detail-select:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ══════════════════════════════════════════════════════════════════════════
    NOTION SYNC

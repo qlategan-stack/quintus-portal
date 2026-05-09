@@ -11,7 +11,7 @@
 
 import 'server-only';
 import { getServerSupabase } from '@/app/lib/supabase-server';
-import type { OpenTaskRow, Priority, VentureRow } from './types';
+import type { OpenTaskRow, Priority, ProjectRow, VentureRow } from './types';
 
 const PRIORITY_ORDER: Record<Priority, number> = {
   red: 1,
@@ -62,4 +62,19 @@ export async function getActiveVentures(): Promise<VentureRow[]> {
     return [];
   }
   return (data ?? []) as VentureRow[];
+}
+
+export async function getActiveProjects(): Promise<ProjectRow[]> {
+  const sb = getServerSupabase();
+  const { data, error } = await sb
+    .from('projects')
+    .select('id, venture_id, title, description, para_category, status')
+    .in('status', ['active', 'paused'])
+    .order('title');
+
+  if (error) {
+    console.error('projects query failed:', error.message);
+    return [];
+  }
+  return (data ?? []) as ProjectRow[];
 }
