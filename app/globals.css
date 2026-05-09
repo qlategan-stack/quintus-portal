@@ -12,9 +12,7 @@
    ══════════════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* Font stacks. Next/font writes the family name into these on <html>. */
-  --font-display: var(--ql-font-display-stack), Georgia, 'Times New Roman', serif;
-  --font-body:    var(--ql-font-body-stack), system-ui, -apple-system, sans-serif;
+  /* Mono is shared across all font pairings — used only for code/numerics. */
   --font-mono:    'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
 
   /* Radii — pill for buttons (50px), 8-10px for cards. */
@@ -22,6 +20,33 @@
   --radius-md:    8px;
   --radius-lg:    12px;
   --radius-pill:  50px;
+
+  /* --font-display and --font-body are set by .font-* classes below. */
+}
+
+/* ── FONT PAIRINGS ─────────────────────────────────────────────────────── */
+/* Each class sets --font-display and --font-body. Components read those
+   tokens, so swapping the .font-* class on <html> swaps every heading and
+   every paragraph in one cascade. Fallbacks point to a safe system font. */
+
+.font-editorial {
+  --font-display: var(--ql-dm-serif), Georgia, 'Times New Roman', serif;
+  --font-body:    var(--ql-dm-sans), system-ui, -apple-system, sans-serif;
+}
+
+.font-slab {
+  --font-display: var(--ql-roboto-slab), Georgia, 'Times New Roman', serif;
+  --font-body:    var(--ql-plex-sans), system-ui, -apple-system, sans-serif;
+}
+
+.font-bold {
+  --font-display: var(--ql-archivo-black), Impact, 'Helvetica Neue', sans-serif;
+  --font-body:    var(--ql-archivo), system-ui, -apple-system, sans-serif;
+}
+
+.font-plex {
+  --font-display: var(--ql-plex-serif), Georgia, 'Times New Roman', serif;
+  --font-body:    var(--ql-plex-sans), system-ui, -apple-system, sans-serif;
 }
 
 /* ── PALETTE: MERIDIAN ─────────────────────────────────────────────────── */
@@ -324,7 +349,6 @@ button {
 
 .palette-switcher {
   position: relative;
-  margin-left: auto;
   flex-shrink: 0;
 }
 
@@ -409,6 +433,37 @@ button {
   font-size: 11px;
   color: var(--text-faint);
   margin-top: 2px;
+}
+
+/* Font switcher previews — render each option in its own display font. */
+.font-trigger-aa {
+  font-size: 14px;
+  line-height: 1;
+  color: var(--gold);
+  font-weight: 400;
+}
+.font-preview-aa {
+  width: 38px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--gold);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  flex-shrink: 0;
+}
+
+/* Two switchers in a row in the nav */
+.switchers {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
