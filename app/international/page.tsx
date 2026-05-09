@@ -1,26 +1,32 @@
-export default function InternationalPage() {
+import { loadManifest } from '@/app/lib/fetch-manifest';
+import VentureDashboards from '@/app/components/VentureDashboards';
+
+export const dynamic = 'force-dynamic';
+
+const SLUG = 'international';
+
+export default async function InternationalPage() {
+  const manifest = await loadManifest(SLUG);
+  const tagline = manifest?.tagline ?? 'Cross-border ventures and partnerships';
+
   return (
     <main className="page">
       <header className="hdr">
         <div>
           <div className="kicker">International Projects</div>
-          <h1>International Projects</h1>
-          <div className="sub">Cross-border ventures and partnerships</div>
+          <h1>{manifest?.name ?? 'International Projects'}</h1>
+          <div className="sub">{tagline}</div>
         </div>
       </header>
 
-      <section className="placeholder">
-        <p>Coming soon.</p>
-        <ul>
-          <li>Project status by country / partner</li>
-          <li>Open follow-ups, contracts, deadlines</li>
-          <li>Currency, logistics, compliance notes</li>
-        </ul>
-      </section>
+      <VentureDashboards slug={SLUG} manifest={manifest} />
 
       <footer className="ftr">
         <span>International Projects</span>
-        <span>Edit app/international/page.tsx to fill this in</span>
+        <span>
+          {manifest?.dashboards.length ?? 0}{' '}
+          {(manifest?.dashboards.length ?? 0) === 1 ? 'dashboard' : 'dashboards'}
+        </span>
       </footer>
     </main>
   );

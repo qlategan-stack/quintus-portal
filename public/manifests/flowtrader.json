@@ -1,0 +1,14 @@
+{
+  "venture": "flowtrader",
+  "name": "FlowTrader",
+  "tagline": "Algo & discretionary trading — compounding focus",
+  "dashboards": [
+    {
+      "title": "Trade Analysis Dashboard",
+      "url": "https://qlategan-stack.github.io/flowtrader-dashboard/trade-analysis/",
+      "description": "Per-trade breakdown · win/loss patterns · strategy review",
+      "category": "analysis"
+    }
+  ],
+  "updatedAt": "2026-05-09"
+}

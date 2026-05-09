@@ -3,18 +3,18 @@ import VentureDashboards from '@/app/components/VentureDashboards';
 
 export const dynamic = 'force-dynamic';
 
-const SLUG = 'flowtrader';
+const SLUG = 'timion';
 
-export default async function FlowTraderPage() {
+export default async function TimionPage() {
   const manifest = await loadManifest(SLUG);
-  const tagline = manifest?.tagline ?? 'Algo & discretionary trading — compounding focus';
+  const tagline = manifest?.tagline ?? 'Timion NPC — non-profit ventures';
 
   return (
     <main className="page">
       <header className="hdr">
         <div>
-          <div className="kicker">FlowTrader</div>
-          <h1>{manifest?.name ?? 'FlowTrader'}</h1>
+          <div className="kicker">Timion NPC</div>
+          <h1>{manifest?.name ?? 'Timion NPC'}</h1>
           <div className="sub">{tagline}</div>
         </div>
       </header>
@@ -22,7 +22,7 @@ export default async function FlowTraderPage() {
       <VentureDashboards slug={SLUG} manifest={manifest} />
 
       <footer className="ftr">
-        <span>FlowTrader</span>
+        <span>Timion NPC</span>
         <span>
           {manifest?.dashboards.length ?? 0}{' '}
           {(manifest?.dashboards.length ?? 0) === 1 ? 'dashboard' : 'dashboards'}

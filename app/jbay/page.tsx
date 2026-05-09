@@ -3,18 +3,18 @@ import VentureDashboards from '@/app/components/VentureDashboards';
 
 export const dynamic = 'force-dynamic';
 
-const SLUG = 'flowtrader';
+const SLUG = 'jbay';
 
-export default async function FlowTraderPage() {
+export default async function JbayPage() {
   const manifest = await loadManifest(SLUG);
-  const tagline = manifest?.tagline ?? 'Algo & discretionary trading — compounding focus';
+  const tagline = manifest?.tagline ?? 'Jeffreys Bay Airbnb — short-stay hosting';
 
   return (
     <main className="page">
       <header className="hdr">
         <div>
-          <div className="kicker">FlowTrader</div>
-          <h1>{manifest?.name ?? 'FlowTrader'}</h1>
+          <div className="kicker">Jeffreys Bay Airbnb</div>
+          <h1>{manifest?.name ?? 'Jeffreys Bay Airbnb'}</h1>
           <div className="sub">{tagline}</div>
         </div>
       </header>
@@ -22,7 +22,7 @@ export default async function FlowTraderPage() {
       <VentureDashboards slug={SLUG} manifest={manifest} />
 
       <footer className="ftr">
-        <span>FlowTrader</span>
+        <span>Jeffreys Bay Airbnb</span>
         <span>
           {manifest?.dashboards.length ?? 0}{' '}
           {(manifest?.dashboards.length ?? 0) === 1 ? 'dashboard' : 'dashboards'}

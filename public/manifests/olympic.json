@@ -1,0 +1,20 @@
+{
+  "venture": "olympic",
+  "name": "Olympic Paints",
+  "tagline": "Limpopo paint manufacturer · KPI tracking · HR clocking",
+  "dashboards": [
+    {
+      "title": "KPI Sales — Weekly",
+      "url": "https://flomaticauto.github.io/olympic-paints-kpi/",
+      "description": "MTD · Reps · Debtors · YoY · Rock-bottom",
+      "category": "sales"
+    },
+    {
+      "title": "HAVEN HR — Clocking",
+      "url": "https://flomaticauto.github.io/olympic-paints-clocking/",
+      "description": "Daily attendance · Departments · Missed clock-outs",
+      "category": "hr"
+    }
+  ],
+  "updatedAt": "2026-05-09"
+}
