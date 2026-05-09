@@ -1,3 +1,13 @@
+type Site = { label: string; href: string; note: string };
+
+const sites: Site[] = [
+  {
+    label: 'Trade Analysis Dashboard',
+    href: 'https://qlategan-stack.github.io/flowtrader-dashboard/trade-analysis/',
+    note: 'Per-trade breakdown · win/loss patterns · strategy review',
+  },
+];
+
 export default function FlowTraderPage() {
   return (
     <main className="page">
@@ -9,18 +19,22 @@ export default function FlowTraderPage() {
         </div>
       </header>
 
-      <section className="placeholder">
-        <p>Coming soon.</p>
-        <ul>
-          <li>Open positions · daily P&amp;L · strategy log</li>
-          <li>System builds and back-test results</li>
-          <li>Risk dashboard and journal feed-back</li>
+      <section>
+        <ul className="links">
+          {sites.map((s) => (
+            <li key={s.href}>
+              <a href={s.href} target="_blank" rel="noopener noreferrer">
+                {s.label} ↗
+              </a>
+              <div className="kicker" style={{ marginTop: 4 }}>{s.note}</div>
+            </li>
+          ))}
         </ul>
       </section>
 
       <footer className="ftr">
         <span>FlowTrader</span>
-        <span>Edit app/flowtrader/page.tsx to fill this in</span>
+        <span>{sites.length} {sites.length === 1 ? 'dashboard' : 'dashboards'}</span>
       </footer>
     </main>
   );
