@@ -13,6 +13,7 @@ import {
   eDate,
   eSelect,
   eTitle,
+  normalizeIso,
 } from './encoders';
 import {
   CUSTOMER_TO_VENTURE,
@@ -78,8 +79,7 @@ export const meetingsMapper: SyncMapper = {
       canonical: {
         title: dTitle(p, 'Name') ?? '(untitled)',
         meeting_type: MEETING_TYPE_TO_KIND[dSelect(p, 'Meeting Type') ?? ''] ?? 'general',
-        held_at: dDate(p, 'Date') ?? (page as NotionPageLike).created_time,
-        customer: dSelect(p, 'Customer'),
+        held_at: normalizeIso(dDate(p, 'Date') ?? (page as NotionPageLike).created_time),
       },
       last_edited_time: (page as NotionPageLike).last_edited_time,
     };
@@ -94,8 +94,7 @@ export const meetingsMapper: SyncMapper = {
       canonical: {
         title: r.title ?? '(untitled)',
         meeting_type: r.meeting_type ?? 'general',
-        held_at: r.held_at ?? null,
-        customer: undefined,
+        held_at: normalizeIso(r.held_at as string | null),
       },
     };
   },

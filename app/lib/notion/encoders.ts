@@ -74,3 +74,16 @@ export const eUrl = (url: string | null) => ({
 });
 
 export const eCheck = (v: boolean) => ({ checkbox: v });
+
+// ── Normalizers (for canonical comparison) ───────────────────────────────
+// Notion returns dates as '2026-05-15' or full ISO; Supabase returns
+// timestamptz as '2026-05-15T00:00:00+00:00'. Both refer to the same
+// instant but differ as strings — hash comparison fails. normalizeIso
+// converts either to a canonical UTC ISO string so both sides hash equal.
+
+export function normalizeIso(s: string | null | undefined): string | null {
+  if (!s) return null;
+  const d = new Date(s);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toISOString();
+}

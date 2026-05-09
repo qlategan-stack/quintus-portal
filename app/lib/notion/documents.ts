@@ -78,7 +78,6 @@ export const documentsMapper: SyncMapper = {
       canonical: {
         title: dTitle(p, 'Document Name') ?? '(untitled)',
         description: dRich(p, 'Description'),
-        area: dSelect(p, 'Area'),
         multi: multi.slice().sort(),
       },
       last_edited_time: (page as NotionPageLike).last_edited_time,
@@ -95,8 +94,7 @@ export const documentsMapper: SyncMapper = {
       updated_at: r.updated_at as string,
       canonical: {
         title: r.title ?? '(untitled)',
-        description: r.body_md ?? null,
-        area: undefined,
+        description: (r.body_md as string | null) || null,
         multi,
       },
     };

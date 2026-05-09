@@ -18,6 +18,7 @@ import {
   eRich,
   eSelect,
   eTitle,
+  normalizeIso,
 } from './encoders';
 import {
   ACTION_TO_STATUS,
@@ -83,15 +84,13 @@ export const tasksMapper: SyncMapper = {
     const p = (page as NotionPageLike).properties;
     const importance = dSelect(p, 'Importance');
     const action = dSelect(p, 'Action Required');
-    const area = dSelect(p, 'Area');
     return {
       canonical: {
         title: dTitle(p, 'Name') ?? '(untitled)',
         description: dRich(p, 'Description'),
         priority: importance ? IMPORTANCE_TO_PRIORITY[importance] ?? null : null,
         status: action ? ACTION_TO_STATUS[action] ?? 'todo' : 'todo',
-        due_at: dDate(p, 'Due Date'),
-        area, // Notion-only, kept in canonical so changes here trigger a sync
+        due_at: normalizeIso(dDate(p, 'Due Date')),
       },
       last_edited_time: (page as NotionPageLike).last_edited_time,
     };
@@ -105,11 +104,10 @@ export const tasksMapper: SyncMapper = {
       updated_at: r.updated_at as string,
       canonical: {
         title: r.title ?? '(untitled)',
-        description: r.description ?? null,
+        description: (r.description as string | null) || null,
         priority: (r.priority as Priority | null) ?? null,
         status: r.status as TaskStatus,
-        due_at: r.due_at ?? null,
-        area: undefined, // not represented Supabase-side
+        due_at: normalizeIso(r.due_at as string | null),
       },
     };
   },
